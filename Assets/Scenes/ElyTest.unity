@@ -553,6 +553,7 @@ GameObject:
   - component: {fileID: 717297356}
   - component: {fileID: 717297357}
   - component: {fileID: 717297355}
+  - component: {fileID: 717297358}
   m_Layer: 0
   m_Name: PLAYER
   m_TagString: Untagged
@@ -589,12 +590,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e63e2e982676d344e8f97dc3a64d437f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 5
+  moveSpeed: 5
   groundDrag: 10
-  playerHeight: 0
+  playerHeight: 2
   groundMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   orientation: {fileID: 404945956}
 --- !u!54 &717297356
 Rigidbody:
@@ -646,6 +647,20 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &717297358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 717297353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd4c5d64b2dd06e4ebc365819bb2dc0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionSource: {fileID: 197502584}
+  interactionRange: 3
 --- !u!1 &980161742
 GameObject:
   m_ObjectHideFlags: 0
@@ -671,7 +686,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 980161742}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -704,7 +719,7 @@ GameObject:
   - component: {fileID: 1090654130}
   - component: {fileID: 1090654129}
   - component: {fileID: 1090654128}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -846,6 +861,7 @@ GameObject:
   - component: {fileID: 2081543716}
   - component: {fileID: 2081543715}
   - component: {fileID: 2081543714}
+  - component: {fileID: 2081543718}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -942,6 +958,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2081543718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2081543713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 884e1ce669b969b419c057ab83ad5987, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3399512312820544347
 PrefabInstance:
   m_ObjectHideFlags: 0

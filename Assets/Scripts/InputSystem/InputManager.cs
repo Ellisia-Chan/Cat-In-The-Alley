@@ -1,5 +1,8 @@
 using UnityEngine;
 
+using CatInTheAlley.EventSystem;
+using CatInTheAlley.PlayerSystem.Events;
+
 namespace CatInTheAlley.InputSystem {
     public class InputManager : MonoBehaviour {
         public static InputManager Instance { get; private set; }
@@ -28,10 +31,25 @@ namespace CatInTheAlley.InputSystem {
 
         private void OnEnable() {
             inputActions.Enable();
+
+            inputActions.Player.Interact.performed += OnInteractAction;
         }
 
         private void OnDisable() {
             inputActions.Disable();
+
+            inputActions.Player.Interact.performed -= OnInteractAction;
+        }
+
+
+        // =====================================================================
+        //
+        //                          Event Methods
+        //
+        // =====================================================================
+
+        private void OnInteractAction(UnityEngine.InputSystem.InputAction.CallbackContext context) {
+            EventBus.Publish(new EVT_OnPlayerInteractAction());
         }
 
 

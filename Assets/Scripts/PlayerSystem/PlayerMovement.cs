@@ -7,10 +7,9 @@ namespace CatInTheAlley.PlayerSystem {
 
 
         [Header("Movement")]
-        [SerializeField] private float walkSpeed;
+        [SerializeField] private float moveSpeed;
         [SerializeField] private float groundDrag;
 
-        private float moveSpeed;
         private float horizontalInput;
         private float verticalInput;
         private Vector3 moveDir;
@@ -37,7 +36,6 @@ namespace CatInTheAlley.PlayerSystem {
             rb = GetComponent<Rigidbody>();
             rb.freezeRotation = true;
             rb.linearDamping = groundDrag;
-            moveSpeed = walkSpeed;
         }
 
         private void Update() {
@@ -75,7 +73,16 @@ namespace CatInTheAlley.PlayerSystem {
         private void HandleMovement() {
             moveDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-            rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
+            if (moveDir.magnitude > 0.1f) {
+                // Normal movement
+                rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
+            }
+            else if (isGrounded) {
+                // Stop sliding when grounded and no input
+                Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+                Vector3 counterForce = -flatVelocity * 5f; // Adjust 5f to control how strongly it stops
+                rb.AddForce(counterForce, ForceMode.Force);
+            }
         }
 
         /// <summary>
