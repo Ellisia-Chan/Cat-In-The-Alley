@@ -47,8 +47,8 @@ namespace CatInTheAlley.InputSystem {
         /// Returns the move vector axis
         /// </summary>
         /// <returns>Vector3</returns>
-        public Vector3 GetMoveVectorAxis() {
-            return inputActions.Player.Move.ReadValue<Vector3>();
+        public Vector3 GetMoveVectorAxisNormalized() {
+            return inputActions.Player.Move.ReadValue<Vector3>().normalized;
         }
 
         /// <summary>

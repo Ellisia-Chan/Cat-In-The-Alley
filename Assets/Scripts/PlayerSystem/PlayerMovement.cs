@@ -3,7 +3,7 @@ using UnityEngine;
 using CatInTheAlley.InputSystem;
 
 namespace CatInTheAlley.PlayerSystem {
-	public class PlayerMovement : MonoBehaviour {
+    public class PlayerMovement : MonoBehaviour {
 
 
         [Header("Movement")]
@@ -14,6 +14,12 @@ namespace CatInTheAlley.PlayerSystem {
         private float horizontalInput;
         private float verticalInput;
         private Vector3 moveDir;
+
+        [Header("Ground Check")]
+        [SerializeField] private float playerHeight;
+        [SerializeField] private LayerMask groundMask;
+
+        private bool isGrounded;
 
         [Header("Forward Direction")]
         [SerializeField] private Transform orientation;
@@ -29,12 +35,14 @@ namespace CatInTheAlley.PlayerSystem {
         // =====================================================================
         private void Start() {
             rb = GetComponent<Rigidbody>();
+            rb.freezeRotation = true;
             rb.linearDamping = groundDrag;
             moveSpeed = walkSpeed;
         }
 
         private void Update() {
             HandleInput();
+            GroundCheck();
         }
 
         private void FixedUpdate() {
@@ -54,11 +62,11 @@ namespace CatInTheAlley.PlayerSystem {
         /// Handles player input
         /// </summary>
         private void HandleInput() {
-            if (InputManager.Instance != null) {
-                Vector3 input = InputManager.Instance.GetMoveVectorAxis();
-                horizontalInput = input.x;
-                verticalInput = input.y;
-            }
+            if (InputManager.Instance == null) return;
+
+            Vector3 input = InputManager.Instance.GetMoveVectorAxisNormalized();
+            horizontalInput = input.x;
+            verticalInput = input.y;
         }
 
         /// <summary>
@@ -78,6 +86,20 @@ namespace CatInTheAlley.PlayerSystem {
             if (flatvel.magnitude > moveSpeed) {
                 Vector3 limitedVel = flatvel.normalized * moveSpeed;
                 rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
+            }
+        }
+
+        /// <summary>
+        /// Checks if the player is on the ground and gets slope information
+        /// </summary>
+        private void GroundCheck() {
+            isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundMask);
+
+            if (isGrounded) {
+                rb.linearDamping = groundDrag;
+            }
+            else {
+                rb.linearDamping = 0f;
             }
         }
     }
