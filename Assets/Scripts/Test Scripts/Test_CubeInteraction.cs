@@ -4,10 +4,33 @@ using CatInTheAlley.Interfaces;
 
 namespace CatInTheAlley.TestScripts {
     public class Test_CubeInteraction : MonoBehaviour, IInteractable {
+
+        private Outline outline;
+
+        // =====================================================================
+        //
+        //                          Unity Lifecycle
+        //
+        // =====================================================================
+
+        private void Start() {
+            outline = GetComponent<Outline>();
+            outline.enabled = false;
+        }
+
+
+
+        // =====================================================================
+        //
+        //                          Interface Methods
+        //
+        // =====================================================================
+
+        // ---------- IInteractable Interface ----------
         public string InteractionPrompt => throw new System.NotImplementedException();
 
         public void OnFocus() {
-            Debug.Log("Focus");
+            outline.enabled = true;
         }
 
         public void OnInteract(GameObject interactor) {
@@ -15,7 +38,7 @@ namespace CatInTheAlley.TestScripts {
         }
 
         public void OnLoseFocus() {
-            Debug.Log("Lose Focus");
+            outline.enabled = false;
         }
     }
 }
