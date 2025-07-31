@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using CatInTheAlley.Interfaces;
+using CatInTheAlley.ObjectPoolSystem;
 
 namespace CatInTheAlley.TestScripts {
     public class Test_CubeInteraction : MonoBehaviour, IInteractable {

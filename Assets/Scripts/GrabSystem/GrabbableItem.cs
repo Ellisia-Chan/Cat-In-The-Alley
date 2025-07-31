@@ -2,6 +2,7 @@ using UnityEngine;
 
 using CatInTheAlley.Interfaces;
 using CatInTheAlley.GrabSystem;
+using CatInTheAlley.ObjectPoolSystem;
 using CatInTheAlley.SO;
 
 public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
@@ -40,25 +41,31 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
     public string InteractionPrompt => "Grab " + grabbableItemSO.itemName;
 
     public void OnFocus() {
-        outline.enabled = true;
+        if (outline != null) {
+            outline.enabled = true; 
+        }
     }
-    public void OnLoseFocus() { 
-        outline.enabled = false;
+    public void OnLoseFocus() {
+        if (outline != null) {
+            outline.enabled = false; 
+        }
     }
 
     public void OnInteract(GameObject interactor) {
-        interactor.GetComponent<GrabController>()?.TryGrab(this);
+        if (interactor != null) {
+            interactor.GetComponent<GrabController>()?.TryGrab(grabbableItemSO, this); 
+        }
     }
 
 
     // ---------- IGrabbable Interface ----------
 
     public GrabbableItemSO GetData() => grabbableItemSO;
-    public void OnGrab(Transform playerGrabPoint) {
-
+    public void OnGrab() {
+        PoolRuntimeSystem.Instance.ReturnToPool(grabbableItemSO.RB_poolItem.name, gameObject);
     }
 
     public void OnDrop(Vector3 dropPosition) {
-
+        PoolRuntimeSystem.Instance.SpawnFromPool(grabbableItemSO.RB_poolItem.name, dropPosition);
     }
 }

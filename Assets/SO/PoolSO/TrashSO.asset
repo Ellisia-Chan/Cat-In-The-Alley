@@ -9,12 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56fd4a321d2bd6a418d89058dac1550d, type: 3}
-  m_Name: TrashBagSO
+  m_Script: {fileID: 11500000, guid: 9c8b8c7a085617e44b371e67b6c7f8f9, type: 3}
+  m_Name: TrashSO
   m_EditorClassIdentifier: 
-  itemName: Trash Bag
+  itemName: TrashSO
   prefab: {fileID: 599492155868227169, guid: 761e7a4567c9ff846bb31bfe208fecbe, type: 3}
-  grabSFX: {fileID: 0}
-  dropSFX: {fileID: 0}
-  nonRB_poolItem: {fileID: 11400000, guid: 32b94d91c2c0bfd468b51bb9c62e2f9d, type: 2}
-  RB_poolItem: {fileID: 11400000, guid: 3ad16890d4ec1f34d924966db45f5b6c, type: 2}
+  poolSize: 5
+  resetPosition: {x: 0, y: -100, z: 0}

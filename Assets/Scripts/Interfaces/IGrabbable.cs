@@ -3,7 +3,7 @@ using CatInTheAlley.SO;
 
 namespace CatInTheAlley.Interfaces {
 	public interface IGrabbable {
-		void OnGrab(Transform playerGrabPoint);
+		void OnGrab();
 		void OnDrop(Vector3 dropPosition);
 		GrabbableItemSO GetData();
     }
