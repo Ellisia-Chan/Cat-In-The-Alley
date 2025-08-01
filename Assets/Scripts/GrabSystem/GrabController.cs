@@ -1,15 +1,20 @@
 using UnityEngine;
 
-using CatInTheAlley.Interfaces;
 using CatInTheAlley.EventSystem;
 using CatInTheAlley.PlayerSystem.Events;
+using CatInTheAlley.ObjectPoolSystem;
+using CatInTheAlley.SO;
+using CatInTheAlley.Interfaces;
 
 namespace CatInTheAlley.GrabSystem {
     public class GrabController : MonoBehaviour {
         [Header("Hand Point")]
         [SerializeField] private Transform handPoint;
 
-        private IGrabbable heldItem;
+        private IGrabbable grabbable;
+        private GrabbableItemSO heldItem;
+
+        private GameObject objectHeld;
 
         private void OnEnable() {
             EventBus.Subscribe<EVT_OnPlayerInteractAction>(OnInteractAction);
@@ -21,24 +26,27 @@ namespace CatInTheAlley.GrabSystem {
 
         private void OnInteractAction(EVT_OnPlayerInteractAction evt) {
             if (heldItem != null) {
-                DropHeldItem();
+                DropHeldItem(heldItem, grabbable);
             }
         }
 
-        public void TryGrab(IGrabbable grabbable) {
+        public void TryGrab(GrabbableItemSO grabbableSO, IGrabbable grabbable) {
             if (heldItem == null) {
-                heldItem = grabbable;
-                heldItem.OnGrab(handPoint);
+                heldItem = grabbableSO;
+                this.grabbable = grabbable;
+                grabbable.OnGrab();
+                objectHeld = PoolRuntimeSystem.Instance.SpawnFromPool(grabbableSO.nonRB_poolItem.name, handPoint.position, handPoint.rotation, handPoint);
 
             }
             else {
-                DropHeldItem();
+                DropHeldItem(heldItem, grabbable);
             }
         }
 
-        public void DropHeldItem() {
+        public void DropHeldItem(GrabbableItemSO grabbableSO, IGrabbable grabbable) {
             if (heldItem != null) {
-                heldItem.OnDrop(handPoint.position + transform.forward * 0.5f);
+                PoolRuntimeSystem.Instance.ReturnToPool(grabbableSO.nonRB_poolItem.name, objectHeld);
+                grabbable.OnDrop(handPoint.position);
                 heldItem = null;
             }
         }

@@ -14,10 +14,10 @@ TagManager:
   - Environment
   - Object
   - Ground
+  - HeldObject
   - 
   - 
-  - 
-  - 
+  - Player
   - 
   - 
   - 

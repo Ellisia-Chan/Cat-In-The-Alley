@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c8b8c7a085617e44b371e67b6c7f8f9, type: 3}
+  m_Name: TrashSO_NonRB
+  m_EditorClassIdentifier: 
+  itemName: TrashSO_NonRB
+  prefab: {fileID: 7790276518790193490, guid: 8d1e7b934fe3cd5449dc21e2f2184abd, type: 3}
+  poolSize: 5
+  resetPosition: {x: 0, y: -100, z: 0}
