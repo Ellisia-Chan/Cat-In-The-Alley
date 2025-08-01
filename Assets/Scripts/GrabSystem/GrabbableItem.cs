@@ -1,14 +1,17 @@
-using UnityEngine;
-
-using CatInTheAlley.Interfaces;
 using CatInTheAlley.GrabSystem;
+using CatInTheAlley.Interfaces;
 using CatInTheAlley.ObjectPoolSystem;
 using CatInTheAlley.SO;
+using CatInTheAlley.SoundSystem;
+using UnityEngine;
 
 public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
 
     [Header("Grabbable Item")]
     [SerializeField] private GrabbableItemSO grabbableItemSO;
+
+    [Header("SFX source SO")]
+    [SerializeField] private PoolItemSO sfxSourceSO;
 
     private Transform objectParent;
     private Rigidbody rb;
@@ -21,14 +24,25 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
     //                          Unity Lifecycle
     //
     // =====================================================================
-
-    private void Start() {
+    private void Awake() {
         rb = GetComponent<Rigidbody>();
         outline = GetComponent<Outline>();
-        outline.enabled = false;
 
+    }
+    private void OnDisable() {
+        if (rb != null) {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.rotation = Quaternion.identity;
+        }
+    }
+
+
+    private void Start() {
+        outline.enabled = false;
         objectParent = transform.parent;
     }
+
 
     // =====================================================================
     //
@@ -42,18 +56,18 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
 
     public void OnFocus() {
         if (outline != null) {
-            outline.enabled = true; 
+            outline.enabled = true;
         }
     }
     public void OnLoseFocus() {
         if (outline != null) {
-            outline.enabled = false; 
+            outline.enabled = false;
         }
     }
 
     public void OnInteract(GameObject interactor) {
         if (interactor != null) {
-            interactor.GetComponent<GrabController>()?.TryGrab(grabbableItemSO, this); 
+            interactor.GetComponent<GrabController>()?.TryGrab(grabbableItemSO, sfxSourceSO, this);
         }
     }
 
@@ -62,10 +76,14 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
 
     public GrabbableItemSO GetData() => grabbableItemSO;
     public void OnGrab() {
-        PoolRuntimeSystem.Instance.ReturnToPool(grabbableItemSO.RB_poolItem.name, gameObject);
+        if (PoolRuntimeSystem.Instance != null) {
+            PoolRuntimeSystem.Instance.ReturnToPool(grabbableItemSO.RB_poolItem.name, gameObject);
+        }
     }
 
     public void OnDrop(Vector3 dropPosition) {
-        PoolRuntimeSystem.Instance.SpawnFromPool(grabbableItemSO.RB_poolItem.name, dropPosition);
+        if (PoolRuntimeSystem.Instance != null) {
+            PoolRuntimeSystem.Instance.SpawnFromPool(grabbableItemSO.RB_poolItem.name, dropPosition);
+        }
     }
 }

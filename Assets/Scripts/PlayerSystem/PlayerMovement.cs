@@ -82,7 +82,7 @@ namespace CatInTheAlley.PlayerSystem {
                 Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
                 Vector3 counterForce = -flatVelocity * 5f; // Adjust 5f to control how strongly it stops
                 rb.AddForce(counterForce, ForceMode.Force);
-            }
+            } 
         }
 
         /// <summary>
