@@ -13,6 +13,7 @@ namespace CatInTheAlley.GrabSystem {
     public class GrabController : MonoBehaviour {
         [Header("Hand Point")]
         [SerializeField] private Transform handPoint;
+        [SerializeField] private Transform dropPoint;
 
         private IGrabbable grabbable;
         private GrabbableItemSO heldItem;
@@ -23,15 +24,27 @@ namespace CatInTheAlley.GrabSystem {
 
         private AudioClip lastPlayedClip;
 
+
+        // =====================================================================
+        //
+        //                          Unity Lifecycle
+        //
+        // =====================================================================
         private void OnEnable() {
             EventBus.Subscribe<EVT_OnPlayerInteractAction>(OnInteractAction);
-            EventBus.Subscribe<EVT_OnSFXEnd>(OnSFXEnd);
         }
 
         private void OnDisable() {
             EventBus.Unsubscribe<EVT_OnPlayerInteractAction>(OnInteractAction);
-            EventBus.Unsubscribe<EVT_OnSFXEnd>(OnSFXEnd);
         }
+
+
+
+        // =====================================================================
+        //
+        //                          Event Methods
+        //
+        // =====================================================================
 
         private void OnInteractAction(EVT_OnPlayerInteractAction evt) {
             if (heldItem != null) {
@@ -39,8 +52,20 @@ namespace CatInTheAlley.GrabSystem {
             }
         }
 
-        private void OnSFXEnd(EVT_OnSFXEnd evt) => currentAudioSource = null;
 
+
+        // =====================================================================
+        //
+        //                              Methods
+        //
+        // =====================================================================
+
+        /// <summary>
+        /// Tries to grab an item
+        /// </summary>
+        /// <param name="grabbableSO"></param>
+        /// <param name="sfxSourceSO"></param>
+        /// <param name="grabbable"></param>
         public void TryGrab(GrabbableItemSO grabbableSO, PoolItemSO sfxSourceSO, IGrabbable grabbable) {
             if (heldItem == null) {
                 this.grabbable = grabbable;
@@ -57,10 +82,17 @@ namespace CatInTheAlley.GrabSystem {
             }
         }
 
+
+        /// <summary>
+        /// Drops the held item
+        /// </summary>
+        /// <param name="grabbableSO"></param>
+        /// <param name="sfxSourceSO"></param>
+        /// <param name="grabbable"></param>
         public void DropHeldItem(GrabbableItemSO grabbableSO, PoolItemSO sfxSourceSO, IGrabbable grabbable) {
             if (heldItem != null) {
                 PoolRuntimeSystem.Instance.ReturnToPool(grabbableSO.nonRB_poolItem.name, objectHeld);
-                grabbable.OnDrop(handPoint.position);
+                grabbable.OnDrop(dropPoint.position);
                 heldItem = null;
 
                 PlaySFX(grabbableSO, sfxSource, grabbableSO.dropSFX);
@@ -68,6 +100,12 @@ namespace CatInTheAlley.GrabSystem {
         }
 
 
+        /// <summary>
+        /// Plays an SFX
+        /// </summary>
+        /// <param name="grabbableSO"></param>
+        /// <param name="sfxSourceSO"></param>
+        /// <param name="clip"></param>
         private void PlaySFX(GrabbableItemSO grabbableSO, PoolItemSO sfxSourceSO, AudioClip clip) {
             if (lastPlayedClip == clip && currentAudioSource != null) {
                 AudioSource existingSource = currentAudioSource.GetComponent<AudioSource>();
@@ -89,6 +127,13 @@ namespace CatInTheAlley.GrabSystem {
             }
         }
 
+
+
+        /// <summary>
+        /// Resets the audio source
+        /// </summary>
+        /// <param name="sfxSource"></param>
+        /// <returns></returns>
         private IEnumerator ResetAudioSource(SFXSource sfxSource) {
             yield return new WaitUntil((sfxSource.IsDone));
             currentAudioSource = null;

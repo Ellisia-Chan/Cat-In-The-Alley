@@ -537,11 +537,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1650642755 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 640691186199421167, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
-  m_PrefabInstance: {fileID: 3162339199958187065}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1672635635
 GameObject:
   m_ObjectHideFlags: 0
@@ -1118,30 +1113,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 640691186199421167, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 640691186199421167, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 640691186199421167, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.45
-      objectReference: {fileID: 0}
-    - target: {fileID: 2850105873588404680, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
-      propertyPath: handOrientation
-      value: 
-      objectReference: {fileID: 1650642755}
     - target: {fileID: 2850105873588404680, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
       propertyPath: cinemachinePanTilt
       value: 
       objectReference: {fileID: 197502589}
-    - target: {fileID: 2991329308504639967, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
-      propertyPath: moveSpeed
-      value: 20
-      objectReference: {fileID: 0}
     - target: {fileID: 3503592329669074359, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1181,10 +1156,6 @@ PrefabInstance:
     - target: {fileID: 3503592329669074359, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6443208676900849042, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
-      propertyPath: m_Mass
-      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7455877090421232328, guid: ef72f97e670e93343862eb2f1c0cdf5f, type: 3}
       propertyPath: interactionSource
