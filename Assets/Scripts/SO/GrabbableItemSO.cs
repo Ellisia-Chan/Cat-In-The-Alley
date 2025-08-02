@@ -11,5 +11,8 @@ namespace CatInTheAlley.SO {
 
         public PoolItemSO nonRB_poolItem;
         public PoolItemSO RB_poolItem;
+
+        [Header("Interaction Properties")]
+        public bool isTrashable;
     }
 }

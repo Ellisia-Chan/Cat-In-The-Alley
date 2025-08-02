@@ -15,6 +15,11 @@ namespace CatInTheAlley.PlayerSystem {
         private IInteractable lastInteractable;
 
 
+        public IInteractable GetCurrentInteractable() {
+            return currentInteractable;
+        }
+
+
         // =====================================================================
         //
         //                          Unity Lifecycle

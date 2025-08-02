@@ -1,13 +1,11 @@
 using CatInTheAlley.EventSystem;
 using CatInTheAlley.Interfaces;
 using CatInTheAlley.ObjectPoolSystem;
+using CatInTheAlley.PlayerSystem;
 using CatInTheAlley.PlayerSystem.Events;
-using CatInTheAlley.SoundSystem;
-using CatInTheAlley.GrabSystem.Events;
 using CatInTheAlley.SO;
 
 using UnityEngine;
-using System.Collections;
 
 namespace CatInTheAlley.GrabSystem {
     public class GrabController : MonoBehaviour {
@@ -15,14 +13,12 @@ namespace CatInTheAlley.GrabSystem {
         [SerializeField] private Transform handPoint;
         [SerializeField] private Transform dropPoint;
 
+        private Interactor interactor;
+
         private IGrabbable grabbable;
         private GrabbableItemSO heldItem;
-        private PoolItemSO sfxSource;
 
         private GameObject objectHeld;
-        private GameObject currentAudioSource;
-
-        private AudioClip lastPlayedClip;
 
 
         // =====================================================================
@@ -30,6 +26,10 @@ namespace CatInTheAlley.GrabSystem {
         //                          Unity Lifecycle
         //
         // =====================================================================
+        private void Awake() {
+            interactor = GetComponent<Interactor>();
+        }
+
         private void OnEnable() {
             EventBus.Subscribe<EVT_OnPlayerInteractAction>(OnInteractAction);
         }
@@ -48,7 +48,9 @@ namespace CatInTheAlley.GrabSystem {
 
         private void OnInteractAction(EVT_OnPlayerInteractAction evt) {
             if (heldItem != null) {
-                DropHeldItem(heldItem, sfxSource, grabbable);
+                if (interactor.GetCurrentInteractable() == null) {
+                    DropHeldItem();
+                }
             }
         }
 
@@ -61,82 +63,61 @@ namespace CatInTheAlley.GrabSystem {
         // =====================================================================
 
         /// <summary>
-        /// Tries to grab an item
+        /// Tries to grab an item. If an item is already held, it's swapped.
         /// </summary>
         /// <param name="grabbableSO"></param>
-        /// <param name="sfxSourceSO"></param>
         /// <param name="grabbable"></param>
-        public void TryGrab(GrabbableItemSO grabbableSO, PoolItemSO sfxSourceSO, IGrabbable grabbable) {
-            if (heldItem == null) {
-                this.grabbable = grabbable;
-                heldItem = grabbableSO;
-                sfxSource = sfxSourceSO;
-
-                grabbable.OnGrab();
-
-                objectHeld = PoolRuntimeSystem.Instance.SpawnFromPool(grabbableSO.nonRB_poolItem.name, handPoint.position, handPoint.rotation, handPoint);
-                PlaySFX(grabbableSO, sfxSource, grabbableSO.grabSFX);
+        public void TryGrab(GrabbableItemSO grabbableSO, IGrabbable grabbable) {
+            if (heldItem != null) {
+                DropHeldItem();
             }
-            else {
-                DropHeldItem(heldItem, sfxSource, grabbable);
-            }
+
+            this.grabbable = grabbable;
+            heldItem = grabbableSO;
+
+            grabbable.OnGrab();
+            objectHeld = PoolRuntimeSystem.Instance.SpawnFromPool(grabbableSO.nonRB_poolItem.name, handPoint.position, handPoint.rotation, handPoint);
         }
 
 
         /// <summary>
         /// Drops the held item
         /// </summary>
-        /// <param name="grabbableSO"></param>
-        /// <param name="sfxSourceSO"></param>
-        /// <param name="grabbable"></param>
-        public void DropHeldItem(GrabbableItemSO grabbableSO, PoolItemSO sfxSourceSO, IGrabbable grabbable) {
+        public void DropHeldItem() {
             if (heldItem != null) {
-                PoolRuntimeSystem.Instance.ReturnToPool(grabbableSO.nonRB_poolItem.name, objectHeld);
                 grabbable.OnDrop(dropPoint.position);
+                PoolRuntimeSystem.Instance.ReturnToPool(heldItem.nonRB_poolItem.name, objectHeld);
+
                 heldItem = null;
-
-                PlaySFX(grabbableSO, sfxSource, grabbableSO.dropSFX);
+                grabbable = null;
+                objectHeld = null;
             }
         }
 
-
         /// <summary>
-        /// Plays an SFX
+        /// Checks if an item is currently being held.
         /// </summary>
-        /// <param name="grabbableSO"></param>
-        /// <param name="sfxSourceSO"></param>
-        /// <param name="clip"></param>
-        private void PlaySFX(GrabbableItemSO grabbableSO, PoolItemSO sfxSourceSO, AudioClip clip) {
-            if (lastPlayedClip == clip && currentAudioSource != null) {
-                AudioSource existingSource = currentAudioSource.GetComponent<AudioSource>();
-                if (existingSource != null && existingSource.isPlaying) {
-                    return;
-                }
-            }
-
-            currentAudioSource = PoolRuntimeSystem.Instance.SpawnFromPool(sfxSourceSO.name, gameObject.transform.position);
-            SFXSource sfxSource = currentAudioSource.GetComponent<SFXSource>();
-
-            if (sfxSource != null) {
-                sfxSource.PlayClip(clip);
-                StartCoroutine(ResetAudioSource(sfxSource));
-                lastPlayedClip = clip;
-            }
-            else {
-                Debug.LogWarning("No SFX Source found");
-            }
+        public bool IsHoldingItem() {
+            return heldItem != null;
         }
 
-
+        /// <summary>
+        /// Gets the Scriptable Object of the currently held item.
+        /// </summary>
+        public GrabbableItemSO GetHeldItemSO() {
+            return heldItem;
+        }
 
         /// <summary>
-        /// Resets the audio source
+        /// Consumes the held item (e.g., when placing it in a trash bin).
         /// </summary>
-        /// <param name="sfxSource"></param>
-        /// <returns></returns>
-        private IEnumerator ResetAudioSource(SFXSource sfxSource) {
-            yield return new WaitUntil((sfxSource.IsDone));
-            currentAudioSource = null;
+        public void ConsumeHeldItem() {
+            if (heldItem != null) {
+                PoolRuntimeSystem.Instance.ReturnToPool(heldItem.nonRB_poolItem.name, objectHeld);
+                heldItem = null;
+                grabbable = null;
+                objectHeld = null;
+            }
         }
     }
 }

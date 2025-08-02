@@ -4,6 +4,7 @@ using CatInTheAlley.ObjectPoolSystem;
 using CatInTheAlley.SO;
 using CatInTheAlley.SoundSystem;
 using UnityEngine;
+using System.Collections;
 
 public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
 
@@ -17,7 +18,8 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
     private Rigidbody rb;
     private Outline outline;
 
-    private string promptString;
+    private GameObject currentAudioSource;
+    private AudioClip lastPlayedClip;
 
     // =====================================================================
     //
@@ -67,7 +69,7 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
 
     public void OnInteract(GameObject interactor) {
         if (interactor != null) {
-            interactor.GetComponent<GrabController>()?.TryGrab(grabbableItemSO, sfxSourceSO, this);
+            interactor.GetComponent<GrabController>()?.TryGrab(grabbableItemSO, this);
         }
     }
 
@@ -77,6 +79,7 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
     public GrabbableItemSO GetData() => grabbableItemSO;
     public void OnGrab() {
         if (PoolRuntimeSystem.Instance != null) {
+            PlaySFX(grabbableItemSO.grabSFX);
             PoolRuntimeSystem.Instance.ReturnToPool(grabbableItemSO.RB_poolItem.name, gameObject);
         }
     }
@@ -84,6 +87,48 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
     public void OnDrop(Vector3 dropPosition) {
         if (PoolRuntimeSystem.Instance != null) {
             PoolRuntimeSystem.Instance.SpawnFromPool(grabbableItemSO.RB_poolItem.name, dropPosition);
+            PlaySFX(grabbableItemSO.dropSFX);
         }
+    }
+
+    // =====================================================================
+    //
+    //                              Methods
+    //
+    // =====================================================================
+
+    /// <summary>
+    /// Plays an SFX
+    /// </summary>
+    /// <param name="clip"></param>
+    private void PlaySFX(AudioClip clip) {
+        if (lastPlayedClip == clip && currentAudioSource != null) {
+            AudioSource existingSource = currentAudioSource.GetComponent<AudioSource>();
+            if (existingSource != null && existingSource.isPlaying) {
+                return;
+            }
+        }
+
+        currentAudioSource = PoolRuntimeSystem.Instance.SpawnFromPool(sfxSourceSO.name, transform.position);
+        SFXSource sfxSource = currentAudioSource.GetComponent<SFXSource>();
+
+        if (sfxSource != null) {
+            sfxSource.PlayClip(clip);
+            PoolRuntimeSystem.Instance.StartCoroutine(ResetAudioSource(sfxSource));
+            lastPlayedClip = clip;
+        }
+        else {
+            Debug.LogWarning("No SFX Source found");
+        }
+    }
+
+    /// <summary>
+    /// Resets the audio source
+    /// </summary>
+    /// <param name="sfxSource"></param>
+    /// <returns></returns>
+    private IEnumerator ResetAudioSource(SFXSource sfxSource) {
+        yield return new WaitUntil(sfxSource.IsDone);
+        currentAudioSource = null;
     }
 }
