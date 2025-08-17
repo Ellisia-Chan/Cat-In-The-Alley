@@ -3,19 +3,27 @@ using UnityEngine;
 
 using CatInTheAlley.SO;
 using CatInTheAlley.ObjectPoolSystem;
+using CatInTheAlley.ServiceLocator;
 
 namespace CatInTheAlley.WorldSpawner {
     public class ObjectSpawnerManager : MonoBehaviour {
         [SerializeField] private List<ObjectSpawnPointSO> objectSpawnPointSOs;
 
-        private void Start() {
-            foreach (ObjectSpawnPointSO objectSpawnPointSO in objectSpawnPointSOs) {
-                if (PoolRuntimeSystem.Instance != null) {
-                    string itemName = objectSpawnPointSO.poolItem.itemName;
+        private IPoolService poolService;
 
-                    foreach (Vector3 objectSpawnPoint in objectSpawnPointSO.spawnPoints) {
-                        PoolRuntimeSystem.Instance.SpawnFromPool(itemName, objectSpawnPoint, Quaternion.identity);
-                    }
+        private void Start() {
+            poolService = ServiceRegistry.Get<IPoolService>();
+
+
+            foreach (ObjectSpawnPointSO objectSpawnPointSO in objectSpawnPointSOs) {
+                if (poolService == null) {
+                    Debug.LogWarning("ObjectSpawnerManager: PoolService is null");
+                    return;
+                }
+
+                string itemName = objectSpawnPointSO.poolItem.itemName;
+                foreach (Vector3 objectSpawnPoint in objectSpawnPointSO.spawnPoints) {
+                    poolService.SpawnFromPool(itemName, objectSpawnPoint, Quaternion.identity);
                 }
             }
         }

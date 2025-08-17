@@ -3,6 +3,7 @@ using CatInTheAlley.Interfaces;
 using CatInTheAlley.ObjectPoolSystem;
 using CatInTheAlley.PlayerSystem;
 using CatInTheAlley.PlayerSystem.Events;
+using CatInTheAlley.ServiceLocator;
 using CatInTheAlley.SO;
 
 using UnityEngine;
@@ -20,6 +21,9 @@ namespace CatInTheAlley.GrabSystem {
 
         private GameObject objectHeld;
 
+        // Service Dependencies
+        private IPoolService poolService;
+
 
         // =====================================================================
         //
@@ -36,6 +40,10 @@ namespace CatInTheAlley.GrabSystem {
 
         private void OnDisable() {
             EventBus.Unsubscribe<EVT_OnPlayerInteractAction>(OnInteractAction);
+        }
+
+        private void Start() {
+            poolService = ServiceRegistry.Get<IPoolService>();
         }
 
 
@@ -76,7 +84,7 @@ namespace CatInTheAlley.GrabSystem {
             heldItem = grabbableSO;
 
             grabbable.OnGrab();
-            objectHeld = PoolRuntimeSystem.Instance.SpawnFromPool(grabbableSO.nonRB_poolItem.name, handPoint.position, handPoint.rotation, handPoint);
+            objectHeld = poolService.SpawnFromPool(grabbableSO.nonRB_poolItem.name, handPoint.position, handPoint.rotation, handPoint);
         }
 
 
@@ -86,7 +94,7 @@ namespace CatInTheAlley.GrabSystem {
         public void DropHeldItem() {
             if (heldItem != null) {
                 grabbable.OnDrop(dropPoint.position);
-                PoolRuntimeSystem.Instance.ReturnToPool(heldItem.nonRB_poolItem.name, objectHeld);
+                poolService.ReturnToPool(heldItem.nonRB_poolItem.name, objectHeld);
 
                 heldItem = null;
                 grabbable = null;
@@ -113,7 +121,7 @@ namespace CatInTheAlley.GrabSystem {
         /// </summary>
         public void ConsumeHeldItem() {
             if (heldItem != null) {
-                PoolRuntimeSystem.Instance.ReturnToPool(heldItem.nonRB_poolItem.name, objectHeld);
+                poolService.ReturnToPool(heldItem.nonRB_poolItem.name, objectHeld);
                 heldItem = null;
                 grabbable = null;
                 objectHeld = null;

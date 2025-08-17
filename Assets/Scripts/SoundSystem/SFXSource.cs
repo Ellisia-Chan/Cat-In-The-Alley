@@ -3,11 +3,15 @@ using UnityEngine;
 
 using CatInTheAlley.SO;
 using CatInTheAlley.ObjectPoolSystem;
+using CatInTheAlley.ServiceLocator;
 
 namespace CatInTheAlley.SoundSystem {
     public class SFXSource : MonoBehaviour {
         [SerializeField] PoolItemSO sfxSO;
         private AudioSource audioSource;
+
+        // Service Dependencies
+        private IPoolService poolService;
 
         private void Awake() {
             audioSource = GetComponent<AudioSource>();
@@ -18,12 +22,15 @@ namespace CatInTheAlley.SoundSystem {
             audioSource.Stop();
         }
 
+        private void Start() {
+            poolService = ServiceRegistry.Get<IPoolService>();
+        }
+
         private IEnumerator AudioEnded() {
             yield return new WaitWhile(() => audioSource.isPlaying);
 
-            if (PoolRuntimeSystem.Instance != null) { 
-                PoolRuntimeSystem.Instance.ReturnToPool(sfxSO.name, gameObject);
-
+            if (poolService != null) {
+                poolService.ReturnToPool(sfxSO.name, gameObject);
             }
         }
 

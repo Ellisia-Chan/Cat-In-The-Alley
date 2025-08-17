@@ -1,26 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 using CatInTheAlley.SO;
+using CatInTheAlley.ServiceLocator;
 
 namespace CatInTheAlley.ObjectPoolSystem {
-    public class PoolRuntimeSystem : MonoBehaviour {
+    public class PoolRuntimeSystem : MonoBehaviour, IPoolService {
 
-        public static PoolRuntimeSystem Instance { get; private set; }
-
+        [Header("Pools")]
         [SerializeField] private List<PoolItemSO> pools;
         private Dictionary<string, Queue<GameObject>> poolDictionary;
         private Dictionary<string, PoolItemSO> poolItemDictionary;
         private Dictionary<string, Transform> poolParents;
 
         private void Awake() {
-            if (Instance != null && Instance != this) {
-                Debug.LogWarning("PoolRuntimeSystem: Instance already exists.");
+
+            if (ServiceRegistry.IsRegistered<IPoolService>()) {
+                Debug.LogWarning("PoolRuntimeSystem: Service is already registered.");
                 Destroy(gameObject);
                 return;
             }
-            Instance = this;
 
-
+            ServiceRegistry.Register<IPoolService>(this);
 
             poolDictionary = new Dictionary<string, Queue<GameObject>>();
             poolItemDictionary = new Dictionary<string, PoolItemSO>();

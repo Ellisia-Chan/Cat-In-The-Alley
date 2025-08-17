@@ -1,10 +1,12 @@
 using CatInTheAlley.GrabSystem;
 using CatInTheAlley.Interfaces;
 using CatInTheAlley.ObjectPoolSystem;
+using CatInTheAlley.ServiceLocator;
 using CatInTheAlley.SO;
 using CatInTheAlley.SoundSystem;
-using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
 
@@ -20,6 +22,11 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
 
     private GameObject currentAudioSource;
     private AudioClip lastPlayedClip;
+
+    // Service Dependencies
+    private IPoolService poolService;
+    private ICoroutineRunner coroutineRunner;
+
 
     // =====================================================================
     //
@@ -43,6 +50,9 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
     private void Start() {
         outline.enabled = false;
         objectParent = transform.parent;
+
+        poolService = ServiceRegistry.Get<IPoolService>();
+        coroutineRunner = ServiceRegistry.Get<ICoroutineRunner>();
     }
 
 
@@ -78,16 +88,16 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
 
     public GrabbableItemSO GetData() => grabbableItemSO;
     public void OnGrab() {
-        if (PoolRuntimeSystem.Instance != null) {
+        if (poolService != null) {
             PlaySFX(grabbableItemSO.grabSFX);
-            PoolRuntimeSystem.Instance.ReturnToPool(grabbableItemSO.RB_poolItem.name, gameObject);
+            poolService.ReturnToPool(grabbableItemSO.RB_poolItem.name, gameObject);
         }
     }
 
     public void OnDrop(Vector3 dropPosition) {
-        if (PoolRuntimeSystem.Instance != null) {
-            PoolRuntimeSystem.Instance.SpawnFromPool(grabbableItemSO.RB_poolItem.name, dropPosition);
+        if (poolService != null) {
             PlaySFX(grabbableItemSO.dropSFX);
+            poolService.SpawnFromPool(grabbableItemSO.RB_poolItem.name, dropPosition);
         }
     }
 
@@ -109,12 +119,12 @@ public class GrabbableItem : MonoBehaviour, IInteractable, IGrabbable {
             }
         }
 
-        currentAudioSource = PoolRuntimeSystem.Instance.SpawnFromPool(sfxSourceSO.name, transform.position);
+        currentAudioSource = poolService.SpawnFromPool(sfxSourceSO.name, transform.position);
         SFXSource sfxSource = currentAudioSource.GetComponent<SFXSource>();
 
         if (sfxSource != null) {
             sfxSource.PlayClip(clip);
-            PoolRuntimeSystem.Instance.StartCoroutine(ResetAudioSource(sfxSource));
+            coroutineRunner.RunCoroutine(ResetAudioSource(sfxSource));
             lastPlayedClip = clip;
         }
         else {
