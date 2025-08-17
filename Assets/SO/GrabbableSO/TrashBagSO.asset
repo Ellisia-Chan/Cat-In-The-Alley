@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Trash Bag
   prefab: {fileID: 599492155868227169, guid: 761e7a4567c9ff846bb31bfe208fecbe, type: 3}
-  grabSFX: {fileID: 0}
-  dropSFX: {fileID: 0}
+  grabSFX: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
+  dropSFX: {fileID: 8300000, guid: d8d04c6f80a1140db85ede568dab1f51, type: 3}
   nonRB_poolItem: {fileID: 11400000, guid: 32b94d91c2c0bfd468b51bb9c62e2f9d, type: 2}
   RB_poolItem: {fileID: 11400000, guid: 3ad16890d4ec1f34d924966db45f5b6c, type: 2}
+  isTrashable: 0

@@ -70,7 +70,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2f6964dea1a213e408392421ee1a010d, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -108,9 +108,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.4
-  m_Height: 0.1
+  m_Height: 1
   m_Direction: 1
-  m_Center: {x: 0, y: -0.33944643, z: 0}
+  m_Center: {x: 0, y: -0.5, z: 0}
 --- !u!114 &4337628483794409874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,3 +124,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grabbableItemSO: {fileID: 11400000, guid: b0e50ca17a399fa44b4bbf6af4a9ebb9, type: 2}
+  sfxSourceSO: {fileID: 11400000, guid: 71a2a9f1836fba944aa295de7168659f, type: 2}

@@ -18,6 +18,5 @@ namespace CatInTheAlley.Cameras {
 
             playerOrientation.rotation = Quaternion.Euler(0, yaw, 0);
         }
-
     }
 }
